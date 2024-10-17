@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5292255699696950088}
   - component: {fileID: 7768078597184247873}
   m_Layer: 0
-  m_Name: Road
+  m_Name: Path
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,4 +59,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _color: {r: 1, g: 0.7187227, b: 0, a: 1}
-  _wayPointRoad: {fileID: 5292255699696950088}
+  _path: {fileID: 5292255699696950088}

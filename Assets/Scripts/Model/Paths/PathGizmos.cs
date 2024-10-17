@@ -1,22 +1,23 @@
-﻿namespace Model.Roads
-{
-    using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Serialization;
 
+namespace Model.Paths
+{
     namespace Model
     {
-        [RequireComponent(typeof(WayPointRoad))]
-        public class WayPointRoadGizmos : MonoBehaviour
+        [RequireComponent(typeof(Path))]
+        public class PathGizmos : MonoBehaviour
         {
             [SerializeField] private Color _color = Color.white;
-            [SerializeField] private WayPointRoad _wayPointRoad;
+            [SerializeField] private Path _path;
 
             private void OnDrawGizmos()
             {
                 Gizmos.color = _color;
                 
-                var waypoints = _wayPointRoad.Waypoints;
+                var waypoints = _path.Waypoints;
                 
-                if (_wayPointRoad == null || waypoints.Count < 2)
+                if (_path == null || waypoints.Count < 2)
                 {
                     return;
                 }
