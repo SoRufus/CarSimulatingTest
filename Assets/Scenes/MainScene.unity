@@ -4500,13 +4500,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 729582662}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 61315560}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!212 &729582664
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5679,6 +5679,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 863052141}
+  - component: {fileID: 863052142}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -5694,14 +5695,29 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 863052139}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -7.77, y: -4.234, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.77, y: -3.686, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 61315560}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &863052142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863052139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d40719c61316c419a75636a88d0300, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxSpeed: 3
+  _acceleration: 1
+  _deceleration: 10
 --- !u!1001 &873346573
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12533,11 +12549,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneContext
       objectReference: {fileID: 0}
+    - target: {fileID: 5571781232829324727, guid: f0200c9766fb29c4783dfb8792147d94, type: 3}
+      propertyPath: _monoInstallers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5571781232829324727, guid: f0200c9766fb29c4783dfb8792147d94, type: 3}
+      propertyPath: _monoInstallers.Array.data[0]
+      value: 
+      objectReference: {fileID: 5498334585753202699}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f0200c9766fb29c4783dfb8792147d94, type: 3}
+--- !u!114 &5498334585753202699 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4954110024645166096, guid: f0200c9766fb29c4783dfb8792147d94, type: 3}
+  m_PrefabInstance: {fileID: 5498334585753202697}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75a01c6fdaf24d9ba64d2b5a42086525, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8470723471147363265 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8470723472064015823, guid: 42a7fbb9a77834946ba6ff10a5e26035, type: 3}

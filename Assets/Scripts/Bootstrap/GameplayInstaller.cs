@@ -7,7 +7,7 @@ namespace Bootstrap
     {
         public override void InstallBindings()
         {
-            //Container.Bind<PathsManager>().AsSingle();
+            Container.Bind<PathsManager>().FromInstance((PathsManager)FindObjectOfType(typeof(PathsManager))).AsSingle().NonLazy();
         }
     }
 }

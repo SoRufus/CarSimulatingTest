@@ -13,6 +13,37 @@ namespace Model.Paths
         {
             _waypoints = GetChildComponentsToList.Get<Waypoint>(gameObject);
         }
+        
+        public Waypoint GetClosestWaypoint(Vector2 position)
+        {
+            var closestWaypoint = _waypoints[0];
+            
+            foreach (var path in _waypoints)
+            {
+                if (Vector2.Distance(position, path.transform.position) <
+                    Vector2.Distance(position, closestWaypoint.transform.position))
+                {
+                    closestWaypoint = path;
+                }
+            }
+
+            return closestWaypoint;
+        }
+        
+        public bool TryGetNextWaypoint(Waypoint currentWaypoint, out Waypoint waypoint)
+        {
+            var indexOfCurrentWaypoint = _waypoints.IndexOf(currentWaypoint);
+            var indexOfNextWaypoint = indexOfCurrentWaypoint + 1;
+            waypoint = null;
+            
+            if (indexOfNextWaypoint > _waypoints.Count - 1)
+            {
+                return false;
+            }
+
+            waypoint = _waypoints[indexOfNextWaypoint];
+            return true;
+        }
 
         public List<Waypoint> Waypoints => _waypoints;
     }
