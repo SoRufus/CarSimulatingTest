@@ -1,23 +1,24 @@
 using System.Collections.Generic;
-using Model;
-using Model.Car;
 using Model.Paths;
 using UnityEngine;
 using Zenject;
 
-public class Spot : MonoBehaviour
+namespace Model.Spots
 {
-    [Inject] private readonly Car _car;
-    [Inject] private readonly PathsManager _manager;
-
-    [SerializeField] private List<Waypoint> _waypoints = new();
-
-    public void OnClick()
+    public class Spot : MonoBehaviour
     {
-        var startingPath = _manager.GetClosestPath(_car.transform.position);
-        var nearestWayPoint = _manager.GetShortestPath(startingPath, _waypoints);
-        var paths = _manager.GetShortestRoadToWaypoint(startingPath, nearestWayPoint);
+        [Inject] private readonly Car.Car _car;
+        [Inject] private readonly PathsManager _manager;
 
-        _car.SetPathsToDestination(paths, nearestWayPoint);
+        [SerializeField] private List<Waypoint> _waypoints = new();
+
+        public void OnClick()
+        {
+            var currentPath = _car.CurrentPath;
+            var nearestWayPoint = _manager.GetShortestPath(currentPath, _waypoints);
+            var paths = _manager.GetShortestRoadToWaypoint(currentPath, nearestWayPoint);
+
+            _car.SetPathsToDestination(paths, nearestWayPoint);
+        }
     }
 }

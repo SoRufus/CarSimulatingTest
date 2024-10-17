@@ -59,11 +59,15 @@ namespace Model.Paths
 
             foreach (var path in GetClosestPaths(startPath.EndPoint))
             {
+                if (ArePathsNextToEachOther(startPath, path)) continue;
+                
                 if (!priorityQueue.ContainsKey(0))
                 {
                     priorityQueue[0] = new List<(Path path, List<Path> paths)>();
                 }
                 priorityQueue[0].Add((path, new List<Path> { path }));
+                
+
                 visited.Add(path);
             }
 
@@ -84,6 +88,11 @@ namespace Model.Paths
                 {
                     foreach (var nextPath in GetClosestPaths(waypoint))
                     {
+                        if (ArePathsNextToEachOther(currentPath, nextPath))
+                        {
+                            visited.Add(currentPath);
+                        }
+                        
                         if (visited.Add(nextPath))
                         {
                             var newDistance = firstKey + CalculatePathDistance(new List<Path> { currentPath, nextPath });
@@ -124,6 +133,23 @@ namespace Model.Paths
             }
 
             return closestPaths;
+        }
+        
+        private bool ArePathsNextToEachOther(Path path1, Path path2, float detectRadius = 1f)
+        {
+            var distance = Vector2.Distance(path1.EndPoint.transform.position, path2.StartPoint.transform.position);
+            if (distance > detectRadius)
+            {
+                return false;
+            }
+            
+            var distance2 = Vector2.Distance(path1.StartPoint.transform.position, path2.EndPoint.transform.position);
+            if (distance2 > detectRadius)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
