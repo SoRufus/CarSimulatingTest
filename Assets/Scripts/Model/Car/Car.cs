@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using DG.Tweening;
 using Model.Paths;
+using Model.Stats;
 using UnityEngine;
 using Zenject;
 
@@ -9,15 +9,10 @@ namespace Model.Car
     public class Car : MonoBehaviour
     {
         [Inject] private PathsManager _pathsManager;
-        
-        [SerializeField] private float _maxSpeed = 5;
-        [SerializeField] private float _acceleration = 1f;
-        [SerializeField] private float _deceleration = 1f;
-        
-        [SerializeField] private float _rotationDeceleration = 1f;
+
+        [SerializeField] private StatsConfig _statsConfig;
         [SerializeField] private float _rotationMultiplier = 1f;
-
-
+        
         private float _currentSpeed;
         
         private List<Path> _pathsToDestination = new();
@@ -74,8 +69,8 @@ namespace Model.Car
             }
             
             _currentSpeed = _nextWayPoint == _destinationWayPoint ?
-                Mathf.Max(0, _currentSpeed - _deceleration * Time.deltaTime) :
-                Mathf.Min(_maxSpeed, _currentSpeed + _acceleration * Time.deltaTime);
+                Mathf.Max(0, _currentSpeed - _statsConfig.Deceleration.Value * _currentSpeed * Time.deltaTime) :
+                Mathf.Min(_statsConfig.MaxSpeed.Value, _currentSpeed + _statsConfig.Acceleration.Value * Time.deltaTime);
 
             transform.position = Vector2.MoveTowards(transform.position, destination,
                 _currentSpeed * Time.deltaTime);
@@ -121,9 +116,9 @@ namespace Model.Car
             var currentAngle = transform.rotation.eulerAngles.z;
             var rotationAmount = Mathf.Abs(Mathf.DeltaAngle(currentAngle, angle));
 
-            if (_currentSpeed > _maxSpeed / 2)
+            if (_currentSpeed > _statsConfig.MaxSpeed.Value / 2)
             {
-                _currentSpeed = Mathf.Max(0, _currentSpeed - _rotationDeceleration * rotationAmount * 
+                _currentSpeed = Mathf.Max(0, _currentSpeed - _statsConfig.DecelerationOnTurns.Value * rotationAmount * 
                     _currentSpeed * Time.deltaTime);
             }
 
@@ -133,5 +128,6 @@ namespace Model.Car
 
         }
         public Path CurrentPath => _currentPath;
+        public StatsConfig StatsConfig => _statsConfig;
     }
 }

@@ -54,56 +54,70 @@ namespace Model.Paths
         
         public List<Path> GetShortestRoadToWaypoint(Path startPath, Waypoint endWaypoint)
         {
-            var priorityQueue = new SortedDictionary<float, List<(Path path, List<Path> paths)>>();
+            var priorityQueue = InitializePriorityQueue(startPath);
             var visited = new HashSet<Path>();
+
+            while (priorityQueue.Count > 0)
+            {
+                var (currentPath, path) = DequeuePath(priorityQueue);
+
+                if (currentPath.Waypoints.Contains(endWaypoint))
+                    return path;
+
+                ExploreNextPaths(currentPath, path, priorityQueue, visited);
+            }
+
+            return new List<Path>();
+        }
+
+        private SortedDictionary<float, List<(Path path, List<Path> paths)>> InitializePriorityQueue(Path startPath)
+        {
+            var priorityQueue = new SortedDictionary<float, List<(Path path, List<Path> paths)>>();
 
             foreach (var path in GetClosestPaths(startPath.EndPoint))
             {
                 if (ArePathsNextToEachOther(startPath, path)) continue;
-                
+
                 if (!priorityQueue.ContainsKey(0))
                 {
                     priorityQueue[0] = new List<(Path path, List<Path> paths)>();
                 }
                 priorityQueue[0].Add((path, new List<Path> { path }));
-                
-
-                visited.Add(path);
             }
 
-            while (priorityQueue.Count > 0)
+            return priorityQueue;
+        }
+
+        private (Path currentPath, List<Path> path) DequeuePath(SortedDictionary<float, List<(Path path, List<Path> paths)>> priorityQueue)
+        {
+            var firstKey = priorityQueue.Keys.First();
+            var pathTuple = priorityQueue[firstKey].First();
+            priorityQueue[firstKey].RemoveAt(0);
+            if (priorityQueue[firstKey].Count == 0)
             {
-                var firstKey = priorityQueue.Keys.First();
-                var (currentPath, path) = priorityQueue[firstKey].First();
-                priorityQueue[firstKey].RemoveAt(0);
-                if (priorityQueue[firstKey].Count == 0)
-                {
-                    priorityQueue.Remove(firstKey);
-                }
+                priorityQueue.Remove(firstKey);
+            }
 
-                if (currentPath.Waypoints.Contains(endWaypoint))
-                    return path;
+            return pathTuple;
+        }
 
-                foreach (var waypoint in currentPath.Waypoints)
+        private void ExploreNextPaths(Path currentPath, List<Path> path, SortedDictionary<float, List<(Path path, List<Path> paths)>> priorityQueue, HashSet<Path> visited)
+        {
+            foreach (var waypoint in currentPath.Waypoints)
+            {
+                foreach (var nextPath in GetClosestPaths(waypoint))
                 {
-                    foreach (var nextPath in GetClosestPaths(waypoint))
+                    if (visited.Add(nextPath))
                     {
-                        if (ArePathsNextToEachOther(currentPath, nextPath)) continue;
-
-                        if (visited.Add(nextPath))
+                        var newDistance = CalculatePathDistance(new List<Path> { currentPath, nextPath });
+                        if (!priorityQueue.ContainsKey(newDistance))
                         {
-                            var newDistance = firstKey + CalculatePathDistance(new List<Path> { currentPath, nextPath });
-                            if (!priorityQueue.ContainsKey(newDistance))
-                            {
-                                priorityQueue[newDistance] = new List<(Path path, List<Path> paths)>();
-                            }
-                            priorityQueue[newDistance].Add((nextPath, new List<Path>(path) { nextPath }));
+                            priorityQueue[newDistance] = new List<(Path path, List<Path> paths)>();
                         }
+                        priorityQueue[newDistance].Add((nextPath, new List<Path>(path) { nextPath }));
                     }
                 }
             }
-
-            return new List<Path>();
         }
 
         private float CalculatePathDistance(List<Path> paths)
