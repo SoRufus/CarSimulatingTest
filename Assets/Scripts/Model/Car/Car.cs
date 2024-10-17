@@ -13,8 +13,9 @@ namespace Model.Car
         [SerializeField] private float _maxSpeed = 5;
         [SerializeField] private float _acceleration = 1f;
         [SerializeField] private float _deceleration = 1f;
+        
+        [SerializeField] private float _rotationDeceleration = 1f;
         [SerializeField] private float _rotationMultiplier = 1f;
-        [SerializeField] private float _maxRotationDuration = 1f;
 
 
         private float _currentSpeed;
@@ -39,7 +40,6 @@ namespace Model.Car
             _currentPath = _pathsManager.GetClosestPath(position);
             _currentWayPoint = _currentPath.GetClosestWaypoint(position);
             _currentPath.TryGetNextWaypoint(_currentWayPoint, out _nextWayPoint);
-            RotateTowardNextWayPoint(0);
         }
 
         public void SetPathsToDestination(List<Path> paths, Waypoint destination)
@@ -56,6 +56,8 @@ namespace Model.Car
         private void Update()
         {
             MoveTowardNextWayPoint();
+            RotateTowardNextWayPoint();
+
         }
 
         private void MoveTowardNextWayPoint()
@@ -71,7 +73,7 @@ namespace Model.Car
                 GetNextWayPoint();
             }
             
-            _currentSpeed = _nextWayPoint == _destinationWayPoint || _currentPath.StartPoint == _nextWayPoint ?
+            _currentSpeed = _nextWayPoint == _destinationWayPoint ?
                 Mathf.Max(0, _currentSpeed - _deceleration * Time.deltaTime) :
                 Mathf.Min(_maxSpeed, _currentSpeed + _acceleration * Time.deltaTime);
 
@@ -83,17 +85,15 @@ namespace Model.Car
         {
             _currentWayPoint = _nextWayPoint;
             
-            if (!_currentPath.TryGetNextWaypoint(_currentWayPoint, out _nextWayPoint))
-            {
-                ChangePath();
-            }
-            
-            RotateTowardNextWayPoint((Vector2.Distance(_currentWayPoint.Position, 
-                _nextWayPoint.Position) / _currentSpeed) * _rotationMultiplier);
-            
             if (_currentWayPoint == _destinationWayPoint)
             {
                 ReachedDestination();
+                return;
+            }
+            
+            if (!_currentPath.TryGetNextWaypoint(_currentWayPoint, out _nextWayPoint))
+            {
+                ChangePath();
             }
         }
 
@@ -110,15 +110,26 @@ namespace Model.Car
             _nextWayPoint = _currentPath.StartPoint;
         }
 
-        private void RotateTowardNextWayPoint(float duration)
+        private void RotateTowardNextWayPoint() 
         {
             if (!_nextWayPoint) return;
             
             var destination = _nextWayPoint.transform.position;
             var direction = (destination - transform.position).normalized;
-            var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;   
+            var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             
-            transform.DORotate(new Vector3(0, 0, angle), Mathf.Min(_maxRotationDuration, duration));
+            var currentAngle = transform.rotation.eulerAngles.z;
+            var rotationAmount = Mathf.Abs(Mathf.DeltaAngle(currentAngle, angle));
+
+            if (_currentSpeed > _maxSpeed / 2)
+            {
+                _currentSpeed = Mathf.Max(0, _currentSpeed - _rotationDeceleration * rotationAmount * 
+                    _currentSpeed * Time.deltaTime);
+            }
+
+            var targetRotation = Quaternion.Euler(0, 0, angle);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 
+                _rotationMultiplier * _currentSpeed * Time.deltaTime);
 
         }
         public Path CurrentPath => _currentPath;

@@ -9,7 +9,7 @@ namespace Model.Paths
     {
         [SerializeField] private List<Path> _paths = new();
         
-        private const float DetectRadius = 1f;
+        private const float DetectRadius = 2f;
 
         [ContextMenu(nameof(GetPathsToList))]
         public void GetPathsToList()
@@ -88,11 +88,8 @@ namespace Model.Paths
                 {
                     foreach (var nextPath in GetClosestPaths(waypoint))
                     {
-                        if (ArePathsNextToEachOther(currentPath, nextPath))
-                        {
-                            visited.Add(currentPath);
-                        }
-                        
+                        if (ArePathsNextToEachOther(currentPath, nextPath)) continue;
+
                         if (visited.Add(nextPath))
                         {
                             var newDistance = firstKey + CalculatePathDistance(new List<Path> { currentPath, nextPath });
