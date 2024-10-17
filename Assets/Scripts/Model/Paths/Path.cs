@@ -46,5 +46,7 @@ namespace Model.Paths
         }
 
         public List<Waypoint> Waypoints => _waypoints;
+        public Waypoint StartPoint => _waypoints[0];
+        public Waypoint EndPoint => _waypoints[^1];
     }
 }

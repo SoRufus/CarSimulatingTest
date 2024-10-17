@@ -221,7 +221,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5437830301331612005}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4131989166376904964}
+        m_TargetAssemblyTypeName: Spot, Model
+        m_MethodName: OnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6509453088755648585
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,6 +243,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4033855486193424564}
+  - component: {fileID: 4131989166376904964}
   m_Layer: 0
   m_Name: Spot
   m_TagString: Untagged
@@ -254,3 +267,16 @@ Transform:
   - {fileID: 8433617334103525413}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4131989166376904964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6509453088755648585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ec3996dc2f2218498880239c83e4b52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _waypoints: []
