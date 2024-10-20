@@ -11,7 +11,6 @@ namespace Bootstrap
     {
         [SerializeField] private List<Path> _paths = new();
 
-
         [ContextMenu(nameof(GetPathsToList))]
         public void GetPathsToList()
         {

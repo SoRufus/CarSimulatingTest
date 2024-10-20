@@ -11,7 +11,7 @@ namespace Model.Car.Components
         [Inject] private readonly PathFinder _pathFinder;
         public Path CurrentPath { get; private set; }
         
-        private const float WaypointDetectionDistance = 0.05f;
+        private const float WaypointDetectionDistance = 0.2f;
 
         private Waypoint _currentWayPoint;
         private Waypoint _nextWayPoint;
@@ -64,7 +64,7 @@ namespace Model.Car.Components
         {
             _currentWayPoint = _nextWayPoint;
 
-            if (_currentWayPoint == _destinationWayPoint)
+            if (_currentWayPoint == _destinationWayPoint && _currentPathIndex == _currentRoute.Paths.Count - 1)
             {
                 ReachedDestination();
                 return;
@@ -95,6 +95,6 @@ namespace Model.Car.Components
         public Vector2 GetNextPosition => _nextWayPoint? _nextWayPoint.transform.position : Vector2.zero;
         public bool IsNextPositionDestination => _nextWayPoint == _destinationWayPoint;
         public bool IsNextWaypointLast => _nextWayPoint == CurrentPath.EndPoint;
-        
+        public RouteData CurrentRoute => _currentRoute;
     }
 }

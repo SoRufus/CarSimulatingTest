@@ -1,10 +1,9 @@
 ﻿using System;
 using Model.Car;
-using Model.Car.Components;
+using R3;
 using TMPro;
 using UnityEngine;
 using Zenject;
-using R3;
 
 namespace View.UI
 {

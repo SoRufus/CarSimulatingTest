@@ -1,3 +1,4 @@
+using System;
 using Model.Car.Components;
 using Model.Car.States;
 using Model.Stats;
@@ -27,14 +28,15 @@ namespace Model.Car
 
         private void UpdateComponents()
         {
+            if (_carState is not IdleState)
+            {
+                Navigation.UpdateNavigation();
+
+                Movement.UpdateMovement(Navigation.GetNextPosition, Navigation.IsNextPositionDestination,
+                    Navigation.IsNextWaypointLast, Rotation.GetRotationAmount(Position, Navigation.GetNextPosition));
+            }
+
             Rotation.UpdateRotation(Navigation.GetNextPosition, Movement.CurrentSpeed.CurrentValue);
-            
-            if (_carState is IdleState) return;
-            
-            Navigation.UpdateNavigation();
-            
-            Movement.UpdateMovement(Navigation.GetNextPosition, Navigation.IsNextPositionDestination, 
-                Navigation.IsNextWaypointLast, Rotation.GetRotationAmount(Position, Navigation.GetNextPosition));
         }
         
         public Vector2 Position => transform.position;

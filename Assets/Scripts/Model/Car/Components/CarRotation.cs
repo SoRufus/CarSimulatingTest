@@ -23,10 +23,12 @@ namespace Model.Car.Components
         private void RotateTowardsPoint(Vector2 destination, float currentSpeed)
         {
             var angle = GetAngle(Car.Position, destination);
-            
             var targetRotation = Quaternion.Euler(0, 0, angle);
-            Car.transform.rotation = Quaternion.Slerp(Car.transform.rotation, targetRotation,
-                currentSpeed / _rotationMultiplier * Time.deltaTime);
+
+            var rotationSpeed = currentSpeed * _rotationMultiplier;
+            
+            Car.transform.rotation = Quaternion.RotateTowards(Car.transform.rotation, targetRotation, 
+                rotationSpeed * Time.deltaTime);
         }
 
         private float GetAngle(Vector2 position, Vector2 destination)

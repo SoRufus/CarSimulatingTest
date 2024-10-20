@@ -9,6 +9,8 @@ namespace Model.Car.Components
         
         private float _currentAcceleration;
         private Vector2 _previousPosition;
+        
+        private const float SpeedThreshold = 2f;
 
         public void UpdateMovement(Vector2 nextPosition, bool isNextPositionDestination = false,
             bool isNextWaypointLast = false, float rotationAmount = 0)
@@ -28,31 +30,49 @@ namespace Model.Car.Components
             Car.transform.position = Vector2.MoveTowards(Car.Position, nextPosition,
                 _currentAcceleration * Time.deltaTime);
         }
-
-        private void RecalculateAcceleration(bool isNextPositionDestination, bool isNextWayPointLast, float rotationAmount)
+        
+        private void RecalculateAcceleration(bool isNextPositionDestination, bool isNextWaypointLast, float rotationAmount)
         {
             if (isNextPositionDestination)
             {
-                _currentAcceleration = Mathf.Max(StatsConfig.MinSpeed.Value, 
-                    _currentAcceleration - StatsConfig.Deceleration.Value * _currentAcceleration * Time.deltaTime);
+                Decelerate(StatsConfig.Deceleration.Value);
             }
-            else if (isNextWayPointLast)
+            else if (isNextWaypointLast && _currentSpeed.Value > StatsConfig.MaxSpeed.Value / SpeedThreshold)
             {
-                _currentAcceleration = Mathf.Max(StatsConfig.MinSpeed.Value, 
-                    _currentAcceleration - StatsConfig.DecelerationOnCrossRoads.Value * _currentAcceleration * Time.deltaTime);
+                Decelerate(StatsConfig.DecelerationOnCrossRoads.Value);
             }
             else
             {
-                _currentAcceleration = Mathf.Min(StatsConfig.MaxSpeed.Value, 
+                Accelerate(rotationAmount);
+            }
+        }
+
+        private void Accelerate(float rotationAmount)
+        {
+            if (_currentSpeed.Value > StatsConfig.MaxSpeed.Value / SpeedThreshold)
+            {
+                _currentAcceleration = Mathf.Min(StatsConfig.MaxSpeed.Value,
+                    _currentAcceleration + (StatsConfig.Acceleration.Value * Time.deltaTime) / Mathf.Max(1, rotationAmount));
+            }
+            else
+            {
+                _currentAcceleration = Mathf.Min(StatsConfig.MaxSpeed.Value,
                     _currentAcceleration + StatsConfig.Acceleration.Value * Time.deltaTime);
             }
+        }
+        
+        private void Decelerate(float decelerationRate)
+        {
+            _currentAcceleration = Mathf.Max(StatsConfig.MinSpeed.Value,
+                _currentAcceleration - decelerationRate * _currentAcceleration * Time.deltaTime);
         }
         
         private void UpdateSpeed()
         {
             var currentPosition = Car.Position;
             var distanceTraveled = Vector2.Distance(currentPosition, _previousPosition);
-            _currentSpeed.Value = distanceTraveled / Time.deltaTime;
+            _currentSpeed.Value = distanceTraveled / Time.fixedDeltaTime;
+            _currentSpeed.Value = _currentSpeed.Value < 0.1f ? 0 : _currentSpeed.Value;
             _previousPosition = currentPosition;
         }
         

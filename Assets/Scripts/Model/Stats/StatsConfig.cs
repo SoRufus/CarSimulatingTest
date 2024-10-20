@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Model.Stats
@@ -10,12 +11,12 @@ namespace Model.Stats
         [field: SerializeField] public StatData Acceleration { get; private set; }
         [field: SerializeField] public StatData Deceleration { get; private set; }
         [field: SerializeField] public StatData DecelerationOnCrossRoads { get; private set; }
-
+        
         private void OnEnable()
         {
             SetDefaultValues();
         }
-        
+
         private void OnDisable()
         {
             SetDefaultValues();

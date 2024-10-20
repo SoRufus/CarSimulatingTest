@@ -18,6 +18,7 @@ namespace Model.Spots
             var currentPath = _car.Navigation.CurrentPath;
             var nearestWayPoint = _routeFinder.GetWaypointWithShortestRouteFromPath(currentPath, _waypoints);
             var data = _routeFinder.GetShortestRouteToWaypoint(currentPath, nearestWayPoint);
+            if (data.Distance == 0) return;
 
             _car.Navigation.SetRouteToDestination(data, nearestWayPoint);
         }

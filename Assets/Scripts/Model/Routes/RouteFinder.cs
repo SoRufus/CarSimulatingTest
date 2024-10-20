@@ -9,9 +9,9 @@ namespace Model.Routes
     public class RouteFinder
     {
         [Inject] private readonly PathFinder _pathFinder;
-        
-        private const float DetectRadius = 2f;
 
+        private const float MaxAngle = 120;
+        
         public Waypoint GetWaypointWithShortestRouteFromPath(Path startPath, List<Waypoint> waypoints)
         {
             Waypoint closestWaypoint = null;
@@ -34,6 +34,7 @@ namespace Model.Routes
         public RouteData GetShortestRouteToWaypoint(Path startPath, Waypoint endWaypoint)
         {
             var priorityQueue = InitializePriorityQueue(startPath);
+
             var visited = new HashSet<Path>();
 
             while (priorityQueue.Count > 0)
@@ -42,28 +43,30 @@ namespace Model.Routes
 
                 if (currentPath.Waypoints.Contains(endWaypoint))
                 {
-                    return new RouteData(route, CalculateRouteLength(route));
+                    return new RouteData(route.Paths, CalculateRouteLength(route.Paths));
                 }
 
-                ExploreNextPaths(currentPath, route, priorityQueue, visited);
+                ExploreNextPaths(currentPath, route.Paths, priorityQueue, visited);
             }
 
+            Debug.Log($"No route found from {startPath.StartPoint} to {endWaypoint}");
             return default;
         }
 
-        private SortedDictionary<float, List<(Path path, List<Path> paths)>> InitializePriorityQueue(Path startPath)
+        private SortedDictionary<float, List<(Path path, RouteData data)>> InitializePriorityQueue(Path startPath)
         {
-            var priorityQueue = new SortedDictionary<float, List<(Path path, List<Path> paths)>>();
+            var priorityQueue = new SortedDictionary<float, List<(Path path, RouteData data)>>();
 
             foreach (var path in _pathFinder.GetClosestPath(startPath.EndPoint))
             {
-                AddToPriorityQueue(priorityQueue, path.Length, path, new List<Path> {startPath, path });
+                if (GetPathsAngle(startPath, path) > MaxAngle) continue;
+                AddToPriorityQueue(priorityQueue, path, new RouteData(new List<Path>(){startPath, path}, path.Length));
             }
 
             return priorityQueue;
         }
 
-        private (Path currentPath, List<Path> path) DequeuePath(SortedDictionary<float, List<(Path path, List<Path> paths)>> priorityQueue)
+        private (Path currentPath, RouteData data) DequeuePath(SortedDictionary<float, List<(Path path, RouteData data)>> priorityQueue)
         {
             var firstKey = priorityQueue.Keys.First();
             var pathTuple = priorityQueue[firstKey].First();
@@ -77,40 +80,45 @@ namespace Model.Routes
         }
 
         private void ExploreNextPaths(Path currentPath, List<Path> path,
-            IDictionary<float, List<(Path path, List<Path> paths)>> priorityQueue, ISet<Path> visited)
+            IDictionary<float, List<(Path path, RouteData data)>> priorityQueue, ISet<Path> visited)
         {
             foreach (var waypoint in currentPath.Waypoints)
             {
                 foreach (var nextPath in _pathFinder.GetClosestPath(waypoint))
                 {
-                    if (!visited.Add(nextPath)) continue;
+                    if (GetPathsAngle(currentPath, nextPath) > MaxAngle) continue;
+                    if (!_pathFinder.ArePathsClose(currentPath, nextPath)) continue;
 
-                    var newDistance = CalculateRouteLength(new List<Path> { currentPath, nextPath });
-                    AddToPriorityQueue(priorityQueue, newDistance, nextPath, new List<Path>(path) { nextPath });
+                    if (!visited.Add(nextPath)) continue;
+                    
+                    var newPathList = new List<Path>(path) { nextPath };
+                    var newData = new RouteData(newPathList, CalculateRouteLength(newPathList));
+
+                    AddToPriorityQueue(priorityQueue, nextPath, newData);
                 }
             }
         }
 
-        private void AddToPriorityQueue(IDictionary<float, List<(Path path, List<Path> paths)>> priorityQueue, float distance, Path path, List<Path> paths)
+        private void AddToPriorityQueue(IDictionary<float, List<(Path path, RouteData data)>> priorityQueue, Path path, RouteData data)
         {
-            if (!priorityQueue.ContainsKey(distance))
+            if (!priorityQueue.ContainsKey(data.Distance))
             {
-                priorityQueue[distance] = new List<(Path path, List<Path> paths)>();
+                priorityQueue[data.Distance] = new List<(Path path, RouteData data)>();
             }
-            priorityQueue[distance].Add((path, paths));
+
+            priorityQueue[data.Distance].Add((path, data));
         }
 
         private float CalculateRouteLength(IEnumerable<Path> paths)
         {
             return paths.Sum(path => path.Length);
         }
-
-        // private bool ArePathsNextToEachOther(Path path1, Path path2)
-        // {
-        //     var distance = Vector2.Distance(path1.EndPoint.transform.position, path2.StartPoint.transform.position);
-        //     var distance2 = Vector2.Distance(path1.StartPoint.transform.position, path2.EndPoint.transform.position);
-        //
-        //     return distance <= DetectRadius && distance2 <= DetectRadius;
-        // }
+        
+        private float GetPathsAngle(Path path1, Path path2)
+        {
+            var path1Direction = (path1.EndPoint.Position - path1.GetPreviousWaypoint(path1.EndPoint).Position).normalized;
+            var path2Direction = (path2.GetNextWayPoint(path2.StartPoint).Position - path2.StartPoint.Position).normalized;
+            return Vector3.Angle(path1Direction, path2Direction);
+        }
     }
 }

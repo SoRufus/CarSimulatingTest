@@ -5,7 +5,8 @@ namespace Model.Paths
 {
     public class PathFinder
     {
-        private const float DetectRadius = 2f;
+        private const float DetectRadius = 1f;
+        
         private readonly List<Path> _paths;
         
         public PathFinder(List<Path> paths)
@@ -44,6 +45,11 @@ namespace Model.Paths
             }
 
             return closestPaths;
+        }
+        
+        public bool ArePathsClose(Path path1, Path path2)
+        {
+            return Vector2.Distance(path1.EndPoint.transform.position, path2.StartPoint.transform.position) < DetectRadius;
         }
     }
 }
