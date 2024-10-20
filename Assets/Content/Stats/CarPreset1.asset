@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: CarPreset1
   m_EditorClassIdentifier: 
   <MaxSpeed>k__BackingField:
-    <BaseValue>k__BackingField: 5
-    <Value>k__BackingField: 5
+    <BaseValue>k__BackingField: 10
+    <Value>k__BackingField: 10
+  <MinSpeed>k__BackingField:
+    <BaseValue>k__BackingField: 0.2
+    <Value>k__BackingField: 0.2
   <Acceleration>k__BackingField:
     <BaseValue>k__BackingField: 5
     <Value>k__BackingField: 5
   <Deceleration>k__BackingField:
-    <BaseValue>k__BackingField: 1.5
-    <Value>k__BackingField: 2
-  <DecelerationOnTurns>k__BackingField:
-    <BaseValue>k__BackingField: 2
-    <Value>k__BackingField: 2
+    <BaseValue>k__BackingField: 0.3
+    <Value>k__BackingField: 0.3
+  <DecelerationOnCrossRoads>k__BackingField:
+    <BaseValue>k__BackingField: 0.2
+    <Value>k__BackingField: 0.2

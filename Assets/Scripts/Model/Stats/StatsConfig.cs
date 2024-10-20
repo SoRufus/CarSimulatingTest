@@ -6,9 +6,10 @@ namespace Model.Stats
     public class StatsConfig : ScriptableObject
     {
         [field: SerializeField] public StatData MaxSpeed { get; private set; }
+        [field: SerializeField] public StatData MinSpeed { get; private set; }
         [field: SerializeField] public StatData Acceleration { get; private set; }
         [field: SerializeField] public StatData Deceleration { get; private set; }
-        [field: SerializeField] public StatData DecelerationOnTurns { get; private set; }
+        [field: SerializeField] public StatData DecelerationOnCrossRoads { get; private set; }
 
         private void OnEnable()
         {
@@ -25,7 +26,8 @@ namespace Model.Stats
             MaxSpeed.SetDefaultValue();
             Acceleration.SetDefaultValue();
             Deceleration.SetDefaultValue();
-            DecelerationOnTurns.SetDefaultValue();
+            DecelerationOnCrossRoads.SetDefaultValue();
+            MinSpeed.SetDefaultValue();
         }
     }
 }

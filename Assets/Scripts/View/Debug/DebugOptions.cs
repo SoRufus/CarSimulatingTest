@@ -1,11 +1,10 @@
-using System;
 using Model.Car;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace Debug
+namespace View.Debug
 {
     public class DebugOptions : MonoBehaviour
     {
@@ -26,12 +25,12 @@ namespace Debug
             _maxSpeedSlider.SetValueWithoutNotify(_car.StatsConfig.MaxSpeed.Value);
             _accelerationSlider.SetValueWithoutNotify(_car.StatsConfig.Acceleration.Value);
             _deceleration.SetValueWithoutNotify(_car.StatsConfig.Deceleration.Value);
-            _decelerationOnTurns.SetValueWithoutNotify(_car.StatsConfig.DecelerationOnTurns.Value);
+            _decelerationOnTurns.SetValueWithoutNotify(_car.StatsConfig.DecelerationOnCrossRoads.Value);
             
             _maxSpeedValueText.text = _car.StatsConfig.MaxSpeed.Value.ToString("f2");
             _accelerationValueText.text = _car.StatsConfig.Acceleration.Value.ToString("f2");
             _decelerationValueText.text = _car.StatsConfig.Deceleration.Value.ToString("f2");
-            _decelerationOnTurnsValueText.text = _car.StatsConfig.DecelerationOnTurns.Value.ToString("f2");
+            _decelerationOnTurnsValueText.text = _car.StatsConfig.DecelerationOnCrossRoads.Value.ToString("f2");
 
             
             _maxSpeedSlider.onValueChanged.AddListener(OnMaxSpeedChanged);
@@ -68,7 +67,7 @@ namespace Debug
         
         private void OnDecelerationOnTurnsChanged(float value)
         {
-            _car.StatsConfig.DecelerationOnTurns.SetValue(value);
+            _car.StatsConfig.DecelerationOnCrossRoads.SetValue(value);
             _decelerationOnTurnsValueText.text = value.ToString("f2");
         }
     }
